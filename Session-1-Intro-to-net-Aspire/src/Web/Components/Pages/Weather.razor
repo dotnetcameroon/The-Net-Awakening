@@ -1,5 +1,7 @@
 ﻿@page "/weather"
 @using Shared.Contracts
+@using Services
+@inject ApiService ApiService
 @attribute [StreamRendering]
 
 <PageTitle>Weather</PageTitle>
@@ -42,14 +44,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
-
         var startDate = DateOnly.FromDateTime(DateTime.Now);
         var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable
-            .Range(1, 5)
-            .Select(index => new WeatherForecast(startDate.AddDays(index), Random.Shared.Next(-20, 55), summaries[Random.Shared.Next(summaries.Length)]))
-            .ToArray();
+        forecasts = await ApiService.GetWeatherAsync();
     }
 }
